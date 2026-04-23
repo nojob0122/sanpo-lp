@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>全日本おさんぽ協会</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --beige: #f5f0e8;
+      --brown: #7a6652;
+      --green: #4a6741;
+      --dark: #2c2c2c;
+      --light: #faf8f4;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: "Hiragino Mincho ProN", "Yu Mincho", "Georgia", serif;
+      color: var(--dark);
+      background: var(--light);
+      line-height: 1.8;
+    }
+
+    /* ── ナビ ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(250, 248, 244, 0.92);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+    }
+
+    .nav-logo {
+      font-size: 14px;
+      letter-spacing: 0.15em;
+      color: var(--brown);
+      font-weight: normal;
+    }
+
+    .nav-cta {
+      background: var(--green);
+      color: white;
+      border: none;
+      padding: 10px 24px;
+      font-size: 13px;
+      letter-spacing: 0.1em;
+      cursor: pointer;
+      font-family: inherit;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .nav-cta:hover { opacity: 0.8; }
+
+    /* ── ヒーロー ── */
+    #hero {
+      height: 100vh;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    #hero img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.15) 0%, rgba(0,0,0,0.4) 100%);
+    }
+
+    .hero-content {
+      position: relative;
+      text-align: center;
+      color: white;
+      padding: 0 20px;
+    }
+
+    .hero-sub {
+      font-size: 13px;
+      letter-spacing: 0.3em;
+      margin-bottom: 20px;
+      opacity: 0.9;
+    }
+
+    .hero-title {
+      font-size: clamp(32px, 5vw, 56px);
+      font-weight: normal;
+      letter-spacing: 0.1em;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+
+    .hero-cta {
+      display: inline-block;
+      background: white;
+      color: var(--dark);
+      text-decoration: none;
+      padding: 16px 48px;
+      font-size: 14px;
+      letter-spacing: 0.2em;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .hero-cta:hover {
+      background: var(--beige);
+    }
+
+    /* ── セクション共通 ── */
+    section {
+      padding: 100px 20px;
+    }
+
+    .section-inner {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      font-size: 11px;
+      letter-spacing: 0.4em;
+      color: var(--brown);
+      text-transform: uppercase;
+      margin-bottom: 24px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: clamp(24px, 3.5vw, 36px);
+      font-weight: normal;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      margin-bottom: 32px;
+    }
+
+    .section-text {
+      font-size: 16px;
+      color: #555;
+      line-height: 2;
+    }
+
+    .section-text p + p {
+      margin-top: 20px;
+    }
+
+    /* ── 協会について ── */
+    #about {
+      background: var(--beige);
+    }
+
+    /* ── 画像セクション ── */
+    .image-section {
+      padding: 0;
+      height: 60vh;
+      overflow: hidden;
+    }
+
+    .image-section img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 30%;
+      display: block;
+    }
+
+    /* ── 散歩という文化 ── */
+    #culture {
+      background: var(--light);
+    }
+
+    /* ── 会員特典 ── */
+    #benefits {
+      background: var(--beige);
+    }
+
+    .carousel-wrap {
+      position: relative;
+      margin-top: 48px;
+    }
+
+    .carousel-track-outer {
+      overflow: hidden;
+    }
+
+    .carousel-track {
+      display: flex;
+      gap: 20px;
+      transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .benefit-card {
+      flex-shrink: 0;
+      background: white;
+      padding: 48px 40px;
+      display: flex;
+      gap: 40px;
+      align-items: flex-start;
+      box-sizing: border-box;
+      /* width は JS で設定 */
+    }
+
+    .benefit-card-icon {
+      font-size: 40px;
+      flex-shrink: 0;
+      line-height: 1;
+      margin-top: 4px;
+    }
+
+    .benefit-card-body {}
+
+    .benefit-card-tag {
+      font-size: 11px;
+      letter-spacing: 0.3em;
+      color: var(--brown);
+      text-transform: uppercase;
+      display: block;
+      margin-bottom: 14px;
+    }
+
+    .benefit-card-title {
+      font-size: clamp(18px, 2.5vw, 24px);
+      font-weight: normal;
+      letter-spacing: 0.05em;
+      line-height: 1.6;
+      margin-bottom: 16px;
+      color: var(--dark);
+    }
+
+    .benefit-card-desc {
+      font-size: 14px;
+      color: #777;
+      line-height: 2;
+    }
+
+    /* ナビゲーション */
+    .carousel-nav {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .carousel-btn {
+      background: none;
+      border: 1px solid #bbb;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      font-size: 16px;
+      color: var(--brown);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .carousel-btn:hover {
+      border-color: var(--brown);
+      background: var(--beige);
+    }
+
+    .carousel-dots {
+      display: flex;
+      gap: 8px;
+    }
+
+    .carousel-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #ccc;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      transition: background 0.2s;
+    }
+
+    .carousel-dot.active {
+      background: var(--brown);
+    }
+
+    @media (max-width: 640px) {
+      .benefit-card {
+        flex-direction: column;
+        gap: 20px;
+        padding: 36px 24px;
+      }
+    }
+
+    /* ── コミュニティ画像 ── */
+    #community-image {
+      padding: 0;
+      height: 50vh;
+      overflow: hidden;
+    }
+
+    #community-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center 40%;
+      display: block;
+    }
+
+    /* ── 入会 ── */
+    #join {
+      background: var(--dark);
+      color: white;
+      text-align: center;
+    }
+
+    #join .section-label { color: #aaa; }
+
+    #join .section-title { color: white; }
+
+    .price-block {
+      margin: 40px 0;
+    }
+
+    .price-amount {
+      font-size: clamp(40px, 6vw, 72px);
+      font-weight: normal;
+      letter-spacing: 0.05em;
+    }
+
+    .price-unit {
+      font-size: 16px;
+      color: #aaa;
+      margin-left: 8px;
+    }
+
+    .price-note {
+      font-size: 13px;
+      color: #888;
+      margin-top: 8px;
+      letter-spacing: 0.1em;
+    }
+
+    .steps {
+      display: flex;
+      justify-content: center;
+      gap: 0;
+      margin: 48px 0;
+      flex-wrap: wrap;
+    }
+
+    .step {
+      text-align: center;
+      padding: 0 32px;
+      position: relative;
+    }
+
+    .step + .step::before {
+      content: "→";
+      position: absolute;
+      left: -8px;
+      top: 16px;
+      color: #666;
+      font-size: 18px;
+    }
+
+    .step-num {
+      width: 40px;
+      height: 40px;
+      border: 1px solid #666;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      color: #aaa;
+      margin: 0 auto 12px;
+    }
+
+    .step-text {
+      font-size: 13px;
+      color: #bbb;
+      line-height: 1.6;
+    }
+
+    .join-cta {
+      display: inline-block;
+      background: white;
+      color: var(--dark);
+      text-decoration: none;
+      padding: 20px 64px;
+      font-size: 15px;
+      letter-spacing: 0.2em;
+      font-family: inherit;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .join-cta:hover { background: var(--beige); }
+
+    /* ── FAQ ── */
+    #faq {
+      background: var(--light);
+    }
+
+    .faq-list {
+      margin-top: 48px;
+    }
+
+    .faq-item {
+      border-top: 1px solid #ddd;
+      padding: 28px 0;
+    }
+
+    .faq-item:last-child {
+      border-bottom: 1px solid #ddd;
+    }
+
+    .faq-q {
+      font-size: 16px;
+      letter-spacing: 0.03em;
+      margin-bottom: 12px;
+      color: var(--dark);
+    }
+
+    .faq-a {
+      font-size: 14px;
+      color: #777;
+      line-height: 1.8;
+    }
+
+    /* ── フッター ── */
+    footer {
+      background: #1a1a1a;
+      color: #888;
+      text-align: center;
+      padding: 40px 20px;
+      font-size: 12px;
+      letter-spacing: 0.15em;
+    }
+
+    footer .footer-logo {
+      font-size: 14px;
+      color: #ccc;
+      margin-bottom: 12px;
+      display: block;
+    }
+
+    /* ── レスポンシブ ── */
+    @media (max-width: 640px) {
+      nav { padding: 16px 20px; }
+      .step + .step::before { display: none; }
+      .steps { gap: 24px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ナビ -->
+  <nav>
+    <span class="nav-logo">全日本おさんぽ協会</span>
+    <a href="#join" class="nav-cta">入会する</a>
+  </nav>
+
+  <!-- ヒーロー -->
+  <section id="hero">
+    <img src="images/hero.png" alt="散歩する女性">
+    <div class="hero-overlay"></div>
+    <div class="hero-content">
+      <p class="hero-sub">ZENNIHON OSANPO KYOKAI</p>
+      <h1 class="hero-title">歩くことが、<br>暮らしを整える。</h1>
+      <a href="#join" class="hero-cta">今すぐ入会する</a>
+    </div>
+  </section>
+
+  <!-- 協会について -->
+  <section id="about">
+    <div class="section-inner">
+      <span class="section-label">About</span>
+      <h2 class="section-title">散歩を、文化にする。</h2>
+      <div class="section-text">
+        <p>忙しい毎日の中で、ふと外に出て歩く。<br>それだけで、なんとなく気持ちが整う。頭が静かになる。機嫌がよくなる。</p>
+        <p>全日本おさんぽ協会は、そんな「散歩の力」をちゃんと言葉にして、広めていくために生まれました。<br>運動でも義務でもなく、暮らしを整えるための実践として。ゆるやかに、でも確かに。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 画像（鴨川） -->
+  <div class="image-section">
+    <img src="images/culture.png" alt="鴨川沿いを歩く男性">
+  </div>
+
+  <!-- 散歩という文化 -->
+  <section id="culture">
+    <div class="section-inner">
+      <span class="section-label">Culture</span>
+      <h2 class="section-title">歩くことは、余白をつくること。</h2>
+      <div class="section-text">
+        <p>スマホを置いて、目的地を決めずに歩く。<br>知らない路地に入ってみる。空の色を見る。足音を聞く。</p>
+        <p>そうやって日常に小さな余白を作ることが、暮らしの質を静かに上げていく。<br>私たちはそう信じて、散歩の楽しみ方・記録の仕方・習慣のつくり方を発信していきます。</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 会員特典 -->
+  <section id="benefits">
+    <div class="section-inner">
+      <span class="section-label">Benefits</span>
+      <h2 class="section-title">散歩好きのための、<br>居場所があります。</h2>
+
+      <div class="carousel-wrap">
+        <div class="carousel-track-outer">
+          <div class="carousel-track" id="carouselTrack">
+
+            <div class="benefit-card">
+              <div class="benefit-card-icon">🗺️</div>
+              <div class="benefit-card-body">
+                <span class="benefit-card-tag">Community</span>
+                <h3 class="benefit-card-title">知らない街の路地を、<br>仲間に教えてもらう</h3>
+                <p class="benefit-card-desc">全国の散歩好きが集まる会員専用コミュニティ。「この路地、実は絶景なんです」「雨の日はこのルートが好き」──そんな話が飛び交う場所があります。地元の地図が少しずつ塗り変わっていく感覚。</p>
+              </div>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-card-icon">🚶</div>
+              <div class="benefit-card-body">
+                <span class="benefit-card-tag">Monthly Event</span>
+                <h3 class="benefit-card-title">月1回、テーマを決めて<br>みんなで歩く</h3>
+                <p class="benefit-card-desc">「朝の川沿いを歩く会」「夕暮れの商店街散策」など、毎月テーマを決めてオフ会を開催。普段ひとりで歩く道が、仲間がいるだけで全然違って見えます。オンライン開催も定期的に。</p>
+              </div>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-card-icon">📬</div>
+              <div class="benefit-card-body">
+                <span class="benefit-card-tag">Newsletter</span>
+                <h3 class="benefit-card-title">季節ごとの散歩テーマが<br>メールで届く</h3>
+                <p class="benefit-card-desc">「秋はこの時間帯に歩くと光が最高」「冬の早朝散歩に持っていくもの」──季節ごとの散歩コラムと、全国会員からのおすすめルートが毎月届きます。次の週末が楽しみになる一通。</p>
+              </div>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-card-icon">🏅</div>
+              <div class="benefit-card-body">
+                <span class="benefit-card-tag">Certification</span>
+                <h3 class="benefit-card-title">「知っている」と<br>「歩いている」が積み上がる</h3>
+                <p class="benefit-card-desc">お散歩検定は、散歩の歴史・歩き方・各地の文化を学ぶ認定制度。知識が増えると、いつもの道に「見えていなかったもの」が見えてくる。歩くことがもっと豊かになります。</p>
+              </div>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-card-icon">🪪</div>
+              <div class="benefit-card-body">
+                <span class="benefit-card-tag">Member's Card</span>
+                <h3 class="benefit-card-title">散歩好きである証明を、<br>ポケットに入れて歩く</h3>
+                <p class="benefit-card-desc">全日本おさんぽ協会の電子会員証が発行されます。どこかで「散歩が好きです」という話になったとき、ちょっと見せられる証明書。散歩仲間を見つけるきっかけにもなります。</p>
+              </div>
+            </div>
+
+            <div class="benefit-card">
+              <div class="benefit-card-icon">🛍️</div>
+              <div class="benefit-card-body">
+                <span class="benefit-card-tag">Goods</span>
+                <h3 class="benefit-card-title">散歩のために作った<br>道具を使う喜び</h3>
+                <p class="benefit-card-desc">散歩が好きな人が「これ欲しかった」と思うものだけを作ります。軽くて使いやすいサコッシュ、メモが書けるポケット地図帳など。会員限定で購入できます。</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="carousel-nav">
+          <button class="carousel-btn" id="prevBtn" aria-label="前へ">←</button>
+          <div class="carousel-dots" id="carouselDots"></div>
+          <button class="carousel-btn" id="nextBtn" aria-label="次へ">→</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- コミュニティ画像（渋谷） -->
+  <div id="community-image">
+    <img src="images/community.png" alt="夜の街を歩く2人">
+  </div>
+
+  <!-- 入会 -->
+  <section id="join">
+    <div class="section-inner">
+      <span class="section-label">Join</span>
+      <h2 class="section-title">さあ、歩きはじめよう。</h2>
+      <div class="price-block">
+        <span class="price-amount">¥3,000</span>
+        <span class="price-unit">／年（税込）</span>
+      </div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <p class="step-text">下のボタンから<br>申込フォームへ</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <p class="step-text">お支払い<br>（各種決済対応）</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <p class="step-text">会員証・コミュニティ<br>招待をお送りします</p>
+        </div>
+      </div>
+      <a href="#" class="join-cta">今すぐ入会する</a>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="section-inner">
+      <span class="section-label">FAQ</span>
+      <h2 class="section-title">よくある質問</h2>
+      <div class="faq-list">
+        <div class="faq-item">
+          <p class="faq-q">Q. いつでも退会できますか？</p>
+          <p class="faq-a">はい。年度末に自動退会となります。</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Q. 活動エリアはどこですか？</p>
+          <p class="faq-a">オンライン活動を中心に、全国各地でイベントを予定しています。</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Q. 入会後すぐに特典は使えますか？</p>
+          <p class="faq-a">お支払い確認後、順次ご案内をお送りします。</p>
+        </div>
+        <div class="faq-item">
+          <p class="faq-q">Q. 散歩が得意でなくても参加できますか？</p>
+          <p class="faq-a">もちろんです。「ちょっと歩いてみたい」という気持ちがあれば、どなたでも歓迎します。</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- フッター -->
+  <footer>
+    <span class="footer-logo">全日本おさんぽ協会</span>
+    <p>© 2026 全日本おさんぽ協会 All rights reserved.</p>
+  </footer>
+
+  <script>
+    const track = document.getElementById('carouselTrack');
+    const dotsWrap = document.getElementById('carouselDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const cards = track.querySelectorAll('.benefit-card');
+    const GAP = 20; // px（CSS の gap と合わせる）
+    let current = 0;
+
+    // ドット生成
+    cards.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', `${i + 1}枚目`);
+      dot.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(dot);
+    });
+
+    function setup() {
+      const containerWidth = track.parentElement.offsetWidth;
+      // 両サイドに前後カードが見切れるよう、カード幅を76%に
+      const cardWidth = Math.round(containerWidth * 0.76);
+      cards.forEach(card => { card.style.width = cardWidth + 'px'; });
+      goTo(current, false); // リサイズ時はアニメなし
+    }
+
+    function goTo(index, animate = true) {
+      current = Math.max(0, Math.min(index, cards.length - 1));
+
+      const containerWidth = track.parentElement.offsetWidth;
+      const cardWidth = parseInt(cards[0].style.width) || Math.round(containerWidth * 0.76);
+      // アクティブカードが中央に来るようオフセット計算
+      const peekOffset = (containerWidth - cardWidth) / 2;
+      const offset = current * (cardWidth + GAP) - peekOffset;
+
+      track.style.transition = animate ? 'transform 0.45s cubic-bezier(0.4, 0, 0.2, 1)' : 'none';
+      track.style.transform = `translateX(${-offset}px)`;
+
+      dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => {
+        d.classList.toggle('active', i === current);
+      });
+      prevBtn.disabled = current === 0;
+      nextBtn.disabled = current === cards.length - 1;
+    }
+
+    prevBtn.addEventListener('click', () => goTo(current - 1));
+    nextBtn.addEventListener('click', () => goTo(current + 1));
+
+    // スワイプ対応
+    let startX = 0;
+    track.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+    track.addEventListener('touchend', e => {
+      const diff = startX - e.changedTouches[0].clientX;
+      if (Math.abs(diff) > 40) goTo(diff > 0 ? current + 1 : current - 1);
+    });
+
+    // 初期化 & リサイズ対応
+    setup();
+    window.addEventListener('resize', setup);
+  </script>
+
+</body>
+</html>
