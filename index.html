@@ -39,6 +39,18 @@
     }
 
     .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      height: 40px;
+      width: auto;
+    }
+
+    .nav-logo span {
       font-size: 14px;
       letter-spacing: 0.15em;
       color: var(--brown);
@@ -454,10 +466,15 @@
     }
 
     footer .footer-logo {
-      font-size: 14px;
-      color: #ccc;
-      margin-bottom: 12px;
       display: block;
+      margin-bottom: 16px;
+    }
+
+    footer .footer-logo img {
+      height: 64px;
+      width: auto;
+      opacity: 0.85;
+      filter: brightness(0) invert(1);
     }
 
     /* ── レスポンシブ ── */
@@ -472,7 +489,9 @@
 
   <!-- ナビ -->
   <nav>
-    <span class="nav-logo">全日本おさんぽ協会</span>
+    <a href="#" class="nav-logo">
+      <img src="images/logo.png" alt="全日本おさんぽ協会">
+    </a>
     <a href="#join" class="nav-cta">入会する</a>
   </nav>
 
@@ -652,7 +671,7 @@
 
   <!-- フッター -->
   <footer>
-    <span class="footer-logo">全日本おさんぽ協会</span>
+    <span class="footer-logo"><img src="images/logo.png" alt="全日本おさんぽ協会"></span>
     <p>© 2026 全日本おさんぽ協会 All rights reserved.</p>
   </footer>
 
